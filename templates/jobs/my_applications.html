@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block title %}My Applications — AI Job Portal{% endblock %}
+
+{% block content %}
+
+<h2>📋 My Applications</h2>
+<p class="text-muted">Track all your job applications and their status</p>
+
+{% if applications %}
+<div class="table-responsive">
+    <table class="table table-hover bg-white rounded shadow-sm">
+        <thead class="table-dark">
+            <tr>
+                <th>Job Title</th>
+                <th>Company</th>
+                <th>Match Score</th>
+                <th>Status</th>
+                <th>Applied On</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for app in applications %}
+            <tr>
+                <td>
+                    <a href="/jobs/{{ app.job.pk }}/">{{ app.job.title }}</a>
+                </td>
+                <td>{{ app.job.company }}</td>
+                <td>
+                    {% if app.match_score >= 50 %}
+                    <span class="match-high">{{ app.match_score }}%</span>
+                    {% elif app.match_score >= 25 %}
+                    <span class="match-mid">{{ app.match_score }}%</span>
+                    {% else %}
+                    <span class="match-low">{{ app.match_score }}%</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if app.status == 'applied' %}
+                    <span class="badge bg-primary">Applied</span>
+                    {% elif app.status == 'shortlisted' %}
+                    <span class="badge bg-success">Shortlisted</span>
+                    {% elif app.status == 'rejected' %}
+                    <span class="badge bg-danger">Rejected</span>
+                    {% elif app.status == 'hired' %}
+                    <span class="badge bg-warning text-dark">Hired 🎉</span>
+                    {% endif %}
+                </td>
+                <td>{{ app.applied_at|date:"d M Y" }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div class="alert alert-info">
+    You haven't applied to any jobs yet.
+    <a href="/jobs/">Browse Jobs</a>
+</div>
+{% endif %}
+
+{% endblock %}

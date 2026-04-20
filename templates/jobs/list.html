@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+
+{% block title %}Jobs — AI Job Portal{% endblock %}
+
+{% block content %}
+
+<div class="row mb-4">
+    <div class="col">
+        <h2>🔍 Find Your Perfect Job</h2>
+        <p class="text-muted">AI-powered matching shows your compatibility score for each job</p>
+    </div>
+</div>
+
+<!-- Search Bar -->
+<div class="row mb-4">
+    <div class="col">
+        <form method="GET">
+            <div class="input-group">
+                <input type="text" name="q" class="form-control form-control-lg"
+                    placeholder="Search by title, company or skill..." value="{{ query }}">
+                <button class="btn btn-primary btn-lg" type="submit">Search</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% if not user.is_authenticated %}
+<div class="alert alert-info">
+    💡 <a href="/accounts/login/">Login</a> and upload your resume to see your match score for each job!
+</div>
+{% endif %}
+
+{% if has_resume == False and user.is_authenticated %}
+<div class="alert alert-warning">
+    📄 <a href="/resume/upload/">Upload your resume</a> to see how well you match each job!
+</div>
+{% endif %}
+
+<!-- Job Cards -->
+<div class="row">
+    {% for item in jobs_with_scores %}
+    <div class="col-md-6 mb-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start">
+                    <h5 class="card-title">{{ item.job.title }}</h5>
+                    {% if item.score is not None %}
+                    {% if item.score >= 50 %}
+                    <span class="badge bg-success">{{ item.score }}% Match</span>
+                    {% elif item.score >= 25 %}
+                    <span class="badge bg-warning text-dark">{{ item.score }}% Match</span>
+                    {% else %}
+                    <span class="badge bg-danger">{{ item.score }}% Match</span>
+                    {% endif %}
+                    {% endif %}
+                </div>
+                <h6 class="text-muted">🏢 {{ item.job.company }}</h6>
+                <p class="text-muted mb-1">📍 {{ item.job.location }}</p>
+                <p class="text-muted mb-2">💰 {{ item.job.salary }}</p>
+                <p class="card-text">{{ item.job.description|truncatewords:20 }}</p>
+                <div class="mb-3">
+                    {% for skill in item.job.required_skills.split %}
+                    <span class="badge bg-light text-dark border me-1">{{ skill }}</span>
+                    {% endfor %}
+                </div>
+                <a href="/jobs/{{ item.job.pk }}/" class="btn btn-primary btn-sm">View Details</a>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col">
+        <div class="alert alert-info">No jobs found. Try a different search.</div>
+    </div>
+    {% endfor %}
+</div>
+
+{% endblock %}

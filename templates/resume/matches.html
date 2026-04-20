@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+
+{% block title %}My Matches — AI Job Portal{% endblock %}
+
+{% block content %}
+
+<h2>🎯 Your Job Matches</h2>
+<p class="text-muted">Jobs ranked by how well your resume matches each position</p>
+
+{% if resume.skills %}
+<div class="alert alert-success">
+    <strong>✅ Skills detected in your resume:</strong> {{ resume.skills }}
+</div>
+{% endif %}
+
+<div class="row">
+    {% for item in ranked_jobs %}
+    <div class="col-md-6 mb-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start">
+                    <h5 class="card-title">{{ item.job.title }}</h5>
+                    {% if item.score >= 50 %}
+                    <span class="badge bg-success fs-6">{{ item.score }}%</span>
+                    {% elif item.score >= 25 %}
+                    <span class="badge bg-warning text-dark fs-6">{{ item.score }}%</span>
+                    {% else %}
+                    <span class="badge bg-danger fs-6">{{ item.score }}%</span>
+                    {% endif %}
+                </div>
+
+                <h6 class="text-muted">🏢 {{ item.job.company }}</h6>
+                <p class="text-muted mb-1">📍 {{ item.job.location }}</p>
+                <p class="text-muted mb-2">💰 {{ item.job.salary }}</p>
+
+                <!-- Match progress bar -->
+                <div class="mb-3">
+                    <div class="progress" style="height: 8px;">
+                        {% if item.score >= 50 %}
+                        <div class="progress-bar bg-success" style="width: {{ item.score }}%"></div>
+                        {% elif item.score >= 25 %}
+                        <div class="progress-bar bg-warning" style="width: {{ item.score }}%"></div>
+                        {% else %}
+                        <div class="progress-bar bg-danger" style="width: {{ item.score }}%"></div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <p class="card-text">{{ item.job.description|truncatewords:15 }}</p>
+
+                <div class="d-flex gap-2">
+                    <a href="/jobs/{{ item.job.pk }}/" class="btn btn-primary btn-sm">View Job</a>
+                    <form method="POST" action="/jobs/{{ item.job.pk }}/apply/">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-outline-primary btn-sm">Quick Apply</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col">
+        <div class="alert alert-warning">
+            No jobs found. Ask your admin to add some job listings!
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+{% endblock %}

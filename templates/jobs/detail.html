@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ job.title }} — AI Job Portal{% endblock %}
+
+{% block content %}
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card mb-4">
+            <div class="card-body">
+                <h2>{{ job.title }}</h2>
+                <h5 class="text-muted">🏢 {{ job.company }}</h5>
+                <p class="text-muted">📍 {{ job.location }} &nbsp;|&nbsp; 💰 {{ job.salary }} &nbsp;|&nbsp; 🕒 {{
+                    job.get_job_type_display }}</p>
+
+                <hr>
+
+                <h5>Job Description</h5>
+                <p>{{ job.description }}</p>
+
+                <h5>Required Skills</h5>
+                <div class="mb-3">
+                    {% for skill in job.required_skills.split %}
+                    <span class="badge bg-primary me-1 mb-1">{{ skill }}</span>
+                    {% endfor %}
+                </div>
+
+                <hr>
+
+                {% if user.is_authenticated %}
+                {% if already_applied %}
+                <button class="btn btn-secondary" disabled>✅ Already Applied</button>
+                {% else %}
+                <form method="POST" action="/jobs/{{ job.pk }}/apply/">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-primary btn-lg">Apply Now</button>
+                </form>
+                {% endif %}
+                {% else %}
+                <a href="/accounts/login/" class="btn btn-primary btn-lg">Login to Apply</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card mb-4">
+            <div class="card-body text-center">
+                <h5>Your Match Score</h5>
+                {% if match_score is not None %}
+                {% if match_score >= 50 %}
+                <h1 class="match-high">{{ match_score }}%</h1>
+                <p class="text-success">Strong Match! 🎉</p>
+                {% elif match_score >= 25 %}
+                <h1 class="match-mid">{{ match_score }}%</h1>
+                <p class="text-warning">Moderate Match 👍</p>
+                {% else %}
+                <h1 class="match-low">{{ match_score }}%</h1>
+                <p class="text-danger">Low Match 😕</p>
+                {% endif %}
+                {% elif user.is_authenticated %}
+                <p class="text-muted">Upload your resume to see your match score!</p>
+                <a href="/resume/upload/" class="btn btn-primary btn-sm">Upload Resume</a>
+                {% else %}
+                <p class="text-muted">Login and upload your resume to see your match score!</p>
+                <a href="/accounts/login/" class="btn btn-primary btn-sm">Login</a>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <h6>Posted</h6>
+                <p class="text-muted">{{ job.posted_at|date:"d M Y" }}</p>
+                <h6>Job Type</h6>
+                <p class="text-muted">{{ job.get_job_type_display }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<a href="/jobs/" class="btn btn-outline-secondary">← Back to Jobs</a>
+
+{% endblock %}

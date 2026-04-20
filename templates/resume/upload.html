@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block title %}Upload Resume — AI Job Portal{% endblock %}
+
+{% block content %}
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body p-5">
+                <h2 class="text-center mb-2">📄 Upload Your Resume</h2>
+                <p class="text-center text-muted mb-4">
+                    Our AI will match you with the best jobs
+                </p>
+
+                {% if existing_resume %}
+                <div class="alert alert-success">
+                    ✅ You already have a resume uploaded. Upload a new one to replace it.
+                </div>
+                {% endif %}
+
+                <form method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Choose your resume file</label>
+                        <input type="file" name="resume_file" class="form-control form-control-lg"
+                            accept=".pdf,.docx,.doc,.txt" required>
+                        <div class="form-text">Supported formats: PDF, DOCX, TXT</div>
+                    </div>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            🚀 Upload & Find Matches
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

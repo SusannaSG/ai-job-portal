@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}AI Job Portal{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .navbar {
+            background-color: #1a1a2e;
+        }
+
+        .navbar-brand {
+            color: #e94560 !important;
+            font-weight: bold;
+            font-size: 1.4rem;
+        }
+
+        .nav-link {
+            color: #ffffff !important;
+        }
+
+        .nav-link:hover {
+            color: #e94560 !important;
+        }
+
+        .btn-primary {
+            background-color: #e94560;
+            border-color: #e94560;
+        }
+
+        .btn-primary:hover {
+            background-color: #c73652;
+            border-color: #c73652;
+        }
+
+        .match-high {
+            color: #28a745;
+            font-weight: bold;
+        }
+
+        .match-mid {
+            color: #ffc107;
+            font-weight: bold;
+        }
+
+        .match-low {
+            color: #dc3545;
+            font-weight: bold;
+        }
+
+        .card {
+            border: none;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        }
+
+        .card:hover {
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            transition: 0.3s;
+        }
+
+        footer {
+            background-color: #1a1a2e;
+            color: #ffffff;
+            padding: 20px 0;
+            margin-top: 50px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand" href="/jobs/">🤖 AI Job Portal</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="/jobs/">Jobs</a></li>
+                    {% if user.is_authenticated %}
+                    <li class="nav-item"><a class="nav-link" href="/resume/upload/">Upload Resume</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/resume/matches/">My Matches</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/jobs/my-applications/">My Applications</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/accounts/logout/">Logout ({{ user.username }})</a>
+                    </li>
+                    {% else %}
+                    <li class="nav-item"><a class="nav-link" href="/accounts/login/">Login</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/accounts/register/">Register</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        {% endfor %}
+        {% endif %}
+
+        {% block content %}
+        {% endblock %}
+    </div>
+
+    <footer class="text-center">
+        <p>🤖 AI Job Portal — NLP Powered Resume Matching</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
